@@ -181,7 +181,6 @@ class IncarIo(object):
         :kwarg annotate: [True] store the node and add extras to preserve
             order and comments of the INCAR. Implies that the node gets stored in the process!
         """
-
         node = get_data_node('parameter', dict=self.get_dict())
         return node
 
@@ -317,6 +316,7 @@ class IncarParamParser(object):
 
     @classmethod
     def parse_num_list(cls, token):
+        """Parse a token into a list of numbers."""
         num_list = token.asList()
         if len(num_list[0]) == 1:
             return num_list[0]

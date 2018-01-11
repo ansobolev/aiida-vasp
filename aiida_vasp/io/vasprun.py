@@ -1,6 +1,4 @@
-"""
-Tools for parsing vasprun.xml files
-"""
+"""Tools for parsing vasprun.xml files"""
 
 try:
     from lxml.objectify import parse
@@ -11,10 +9,7 @@ import numpy as np
 
 
 class VasprunParser(object):
-    """
-    parse xml into objecttree, provide convenience methods
-    for parsing
-    """
+    """Parse xml into objecttree, provide convenience methods for parsing."""
 
     def __init__(self, fname):
         super(VasprunParser, self).__init__()
@@ -30,6 +25,7 @@ class VasprunParser(object):
 
     @property
     def datetime(self):
+        """Get a datetime object from date and time tags."""
         date = self._i('date')
         time = self._i('time')
         dtstr = date + ' ' + time
@@ -124,7 +120,7 @@ class VasprunParser(object):
         return np.array(map(split, tag.v), dtype=float)
 
     def _array(self, parent, key=None, path='//'):
-        """extract an <array> tag"""
+        """Extract an <array> tag."""
         pred = '[@name="%s"]' % key if key else ''
         tag = self.tree.find(path + parent + '/array%s' % pred)
         dims = [i.text for i in tag.findall('dimension')]
@@ -151,10 +147,9 @@ class VasprunParser(object):
         shape.append(len(ldim))
 
         def split(string_):
-            if mode == 'r':
-                return tuple(string_.text.split())
-            elif mode == 'rc':
+            if mode == 'rc':
                 return tuple([x.text.strip() for x in string_.c])
+            return tuple(string_.text.split())
 
         data = np.array(map(split, tag.iterfind('*//%s' % mode)), dtype=dtyp)
         return data.reshape(shape)

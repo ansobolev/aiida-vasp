@@ -24,6 +24,7 @@ def cif_to_structure(cifnode=None):
 
 @optional_inline
 def cif_to_structure_inline(cif=None):
+    """Create a structure from a CIF file in an inline calculation."""
     structure_cls = DataFactory('structure')
     structure = structure_cls()
     structure.set_ase(cif.ase)
@@ -31,6 +32,7 @@ def cif_to_structure_inline(cif=None):
 
 
 def get_or_create_structure(cif=None, use_first=False):
+    """Find a structure for a cif file in the DB or else create (store) a new one."""
     cts = filter(cts_filter, cif.get_outputs())
     if len(cts) > 1 and not use_first:
         raise Exception('more than one cif->str calculations found')
@@ -53,7 +55,7 @@ def get_cifs_with_name(filename):
 
 
 def filter_cifs_for_structure(cif_seq, structure):
-    """return all cif files in the sequence which match the given structure"""
+    """Return all cif files in the sequence which match the given structure."""
     ase = None
     if hasattr(structure, 'get_ase'):
         ase = structure.get_ase()

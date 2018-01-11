@@ -1,6 +1,4 @@
-"""
-A utility class to simplify creating VASP-Calculations, loosely follows the builder design pattern
-"""
+"""A utility class to simplify creating VASP-Calculations, loosely follows the builder design pattern"""
 import os
 
 from aiida.orm import CalculationFactory, DataFactory
@@ -11,9 +9,9 @@ from aiida_vasp.calcs.vasp import ordered_unique_list
 
 class VaspMaker(object):
     """
-    simplifies creating a Scf, Nscf or AmnCalculation from scratch interactively or
-    as a copy or continuation of a previous calculation
-    further simplifies creating certain often used types of calculations
+    Simplifies creating a Scf, Nscf or AmnCalculation from scratch interactively or as a copy or continuation of a previous calculation.
+
+    Further simplifies creating certain often used types of calculations.
 
     Most of the required information can be given as keyword arguments to
     the constructor or set via properties later on.
@@ -207,7 +205,7 @@ class VaspMaker(object):
         self._wannier_data = out.get('wannier_data', self.wannier_data)
 
     def new(self):
-        """Create a new (unstored) Calculation node from previously set properties"""
+        """Create a new, unstored Calculation node from previously set properties."""
         calc = self.calc_cls()
         calc.use_code(self._code)
         calc.use_structure(self._structure)
@@ -255,11 +253,11 @@ class VaspMaker(object):
         self._kpoints.set_cell(self._structure.get_ase().get_cell())
 
     def set_kpoints_path(self, value=None, weights=None, **kwargs):
-        '''
-        Calls kpoints' set_kpoints_path method with value, automatically adds
-        weights.
+        """
+        Calls kpoints' set_kpoints_path method with value, automatically adds weights.
+
         Copies the kpoints node if it's already stored.
-        '''
+        """
         if self._kpoints.is_stored:
             self.kpoints = self.calc_cls.new_kpoints()
         self._kpoints.set_kpoints_path(value=value, **kwargs)
@@ -269,19 +267,13 @@ class VaspMaker(object):
             self._kpoints.set_kpoints(kp_list, weights=weights)
 
     def set_kpoints_mesh(self, *args, **kwargs):
-        '''
-        Passes arguments on to kpoints.set_kpoints_mesh, copies if it was
-        already stored.
-        '''
+        """Passes arguments on to kpoints.set_kpoints_mesh, copies if it was already stored."""
         if self._kpoints.pk:
             self.kpoints = self.calc_cls.new_kpoints()
         self._kpoints.set_kpoints_mesh(*args, **kwargs)
 
     def set_kpoints_list(self, kpoints, weights=None, **kwargs):
-        '''
-        Passes arguments on to kpoints.set_kpoints, copies if it was already
-        stored.
-        '''
+        """Passes arguments on to kpoints.set_kpoints, copies if it was already stored."""
         import numpy as np
         if self._kpoints.pk:
             self.kpoints = self.calc_cls.new_kpoints()
@@ -363,6 +355,7 @@ class VaspMaker(object):
             self._resources['num_mpiprocs_per_machine'] = val[1]
 
     def add_parameters(self, **kwargs):
+        """Add additional parameters to the generated calculation, does not override existing parameters."""
         if self._parameters.pk:
             self._parameters = self._parameters.copy()
         for key, value in kwargs.iteritems():
@@ -382,6 +375,7 @@ class VaspMaker(object):
         return conflict
 
     def _set_default_paws(self):
+        """Set default POTCAR potentials from the given mapping."""
         for key in self.elements:
             if key not in self._paws:
                 if self._paw_def is None:
@@ -464,6 +458,7 @@ class VaspMaker(object):
 
     @property
     def n_elec(self):
+        """Total number of valence electrons"""
         res = 0
         for k in self._structure.get_ase().get_chemical_symbols():
             res += self._paws[k].valence
